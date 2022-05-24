@@ -1,7 +1,7 @@
 default: test test-better bench bench-better
 
 CC ?= clang
-CFLAGS ?= -Wall
+CFLAGS ?= -Wall -O2
 
 ifeq ($(filter clean,$(MAKECMDGOALS)),)
 -include Makefile.deps
