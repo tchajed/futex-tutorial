@@ -102,6 +102,6 @@ One cool thing about this investigation is that you can see that _there is no
 magic_ even for something as low-level as a mutex. The example in
 [test.c](test.c) (a loose adaption of the demo in the
 [futex(2)](https://man7.org/linux/man-pages/man2/futex.2.html) man page)
-essentially uses only the `fork()` and `futex()` syscalls, and even though the
-latter has to be issued directly with `syscall()` because for some reason glibc
-doesn't provide wrapper functions for `futex` (it also does use `wait()`).
+essentially uses only the `fork()` and `futex()` syscalls (it does also use
+`wait()` to terminate gracefully). The `futex` is even issued directly with
+`syscall()` because glibc doesn't provide wrapper functions for `futex`.
