@@ -1,0 +1,23 @@
+name: Build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+  steps:
+    - uses: actions/checkout@v2
+    - name: Compile
+      run: make
+    - name: Test
+      run: |
+        ./test
+        ./test-better
+    - name: Bench
+      run: |
+        ./bench
+        ./bench-better
+

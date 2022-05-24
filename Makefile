@@ -3,13 +3,6 @@ default: test test-better bench bench-better
 CC ?= clang
 CFLAGS ?= -Wall -O2
 
-ifeq ($(filter clean,$(MAKECMDGOALS)),)
--include Makefile.deps
-endif
-
-clean:
-	rm -f test test-better bench bench-better
-
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
@@ -24,3 +17,6 @@ bench: futex.o mutex.o bench.o
 
 bench-better: futex.o mutex_better.o bench.o
 	$(CC) $(CFLAGS) $^ -o $@
+
+clean:
+	rm -f test test-better bench bench-better
