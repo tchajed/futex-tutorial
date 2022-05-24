@@ -30,7 +30,7 @@ int main() {
       mutex_unlock(m);
     }
 
-    exit(EXIT_SUCCESS);
+    return 0;
   }
 
   /* Parent falls through to here. */
@@ -43,5 +43,5 @@ int main() {
 
   wait(NULL);
 
-  exit(EXIT_SUCCESS);
+  return 0;
 }

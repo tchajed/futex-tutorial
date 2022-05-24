@@ -66,7 +66,7 @@ uncontended locks by using the futex state to track whether there are waiters,
 but the implementation is a bit intricate; see [mutex_better.c](mutex_better.c)
 for a complete C implementation of the pseudo-code in the paper. In my (fairly
 unscientific) benchmarks, this brings the cost of acquiring and releasing an
-uncontended mutex from 420 ns down to only 15 ns.
+uncontended mutex from 360 ns down to only 12 ns.
 
 ---
 
