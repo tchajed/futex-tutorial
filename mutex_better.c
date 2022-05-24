@@ -11,7 +11,11 @@
 // implementation based on "Futexes are tricky"
 // https://www.akkadia.org/drepper/futex.pdf
 
-mutex_t *new_mutex() { return aligned_alloc(4, 4); }
+mutex_t *new_mutex() {
+  mutex_t *m = (mutex_t *)aligned_alloc(4, 4);
+  atomic_store(m, UNLOCKED);
+  return m;
+}
 
 uint32_t atomic_compare_swap(mutex_t *m, uint32_t expected, uint32_t desired) {
   uint32_t v = expected;
@@ -51,6 +55,6 @@ void mutex_unlock(mutex_t *m) {
   // released the lock)
   if (atomic_fetch_sub(m, 1) != LOCKED_NO_WAIT) {
     atomic_store(m, UNLOCKED);
-    futex_wake(m);
+    futex_wake(m, 1);
   }
 }

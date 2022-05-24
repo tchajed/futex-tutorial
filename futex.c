@@ -21,13 +21,7 @@ int futex_wait(futex_t *futexp, uint32_t expect_val) {
 }
 
 // Wake up threads sleeping in futex_wait, up to a maximum of num_waiters
-// threads.
-int futex_wake_num(futex_t *futexp, uint32_t num_waiters) {
+// threads. Typically num_waiters is 1 or INT_MAX.
+int futex_wake(futex_t *futexp, uint32_t num_waiters) {
   return futex((uint32_t *)futexp, FUTEX_WAKE, num_waiters, NULL, NULL, 0);
 }
-
-// Wake up the first thread waiting on futexp.
-int futex_wake(futex_t *futexp) { return futex_wake_num(futexp, 1); }
-
-// Wake up all threads waiting on futexp.
-int futex_wake_all(futex_t *futexp) { return futex_wake_num(futexp, INT_MAX); }
