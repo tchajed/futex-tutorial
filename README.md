@@ -16,15 +16,18 @@ The basic API consists of two system calls, where `uint32_t *futexp` is a
 pointer to shared memory:
 
 ```c
-// Put this thread to sleep until another thread calls futex_wait on the same futex. If the value currently stored is not expect_val, immediately returns with -EEAGAIN.
+// Put this thread to sleep until another thread calls futex_wait on the same
+// futex. If the value currently stored is not expect_val, immediately returns
+// with -EEAGAIN.
 int futex_wait(uint32_t *futexp, uint32 expect_val);
 
-// Wake threads waiting on futexp, up to a maximum of num_waiters (which is typically either 1 or INT_MAX).
+// Wake threads waiting on futexp, up to a maximum of num_waiters (which is
+// typically either 1 or INT_MAX).
 int futex_wake(uint32_t *futexp, uint32 num_waiters);
 ```
 
-In their most basic form, mutexes can be implemented using futexes like the
-following (see [mutex.c](mutex.c) for a full-fledged version that compiles):
+A basic implementation of mutexes using futexes looks like the following (see
+[mutex.c](mutex.c) for a full-fledged version that compiles):
 
 ```c
 typedef mutex_t uint32_t;
