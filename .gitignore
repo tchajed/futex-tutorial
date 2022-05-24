@@ -2,4 +2,6 @@
 
 # binaries
 /bench
+/bench-better
 /test
+/test-better

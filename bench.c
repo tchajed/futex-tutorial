@@ -15,7 +15,7 @@ void mutex_ops(mutex_t *m) {
   mutex_unlock(m);
 }
 
-#define ITERS 1000000
+#define ITERS 10000000
 
 int main() {
   mutex_t *m = new_mutex();
@@ -26,5 +26,5 @@ int main() {
     mutex_ops(m);
   }
   double time_s = (clock() - start) / (double)CLOCKS_PER_SEC;
-  printf("%0.2f us/acquire\n", time_s / ITERS * 1000000);
+  printf("%0.2f ns/acquire\n", time_s / ITERS * 1e9);
 }
