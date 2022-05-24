@@ -12,7 +12,7 @@
 // https://www.akkadia.org/drepper/futex.pdf
 
 mutex_t *new_mutex() {
-  mutex_t *m = (mutex_t *)aligned_alloc(4, 4);
+  mutex_t *m = (mutex_t *)aligned_alloc(4, sizeof(mutex_t));
   atomic_store(m, UNLOCKED);
   return m;
 }
