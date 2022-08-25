@@ -16,13 +16,17 @@ mutex_t *new_mutex() {
 void mutex_lock(mutex_t *m) {
   uint32_t expected = UNLOCKED;
   while (!atomic_compare_exchange_weak(m, &expected, LOCKED)) {
-    // wait for an unlock on m, and immediately bail out if mutex is not
-    // locked (due to race between cmpxchg and this wait)
+    // Wait for a futex_wake signal on m. The kernel will immediately bail out
+    // if it finds mutex value is not LOCKED, which might occur if between the
+    // compare-exchange and futex_wait the mutex is released. Without this
+    // feature, lock would wait infinitely for a futex_wait that it has already
+    // missed.
     futex_wait(m, LOCKED);
   }
 }
 
 void mutex_unlock(mutex_t *m) {
   atomic_store(m, UNLOCKED);
+  // Wake up any thread waiting in mutex_lock.
   futex_wake(m, 1);
 }
