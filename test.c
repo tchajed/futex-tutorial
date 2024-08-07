@@ -13,35 +13,40 @@
     exit(EXIT_FAILURE);                                                        \
   } while (0)
 
-#define NLOOPS 100
+#define NTHREADS 10
+#define NLOOPS 10000
 
 int main() {
-
   mutex_t *m = new_mutex();
+  int mutex_held = 0;
 
-  int childPid = fork();
-  if (childPid == -1)
-    errExit("fork");
-
-  if (childPid == 0) { /* Child */
-    for (int j = 0; j < NLOOPS; j++) {
-      mutex_lock(m);
-      printf("Child  (%jd) %d\n", (intmax_t)getpid(), j);
-      mutex_unlock(m);
+  for (int child_index = 0; child_index < NTHREADS; child_index++) {
+    int childPid = fork();
+    if (childPid == -1) {
+      errExit("fork");
     }
-
-    return 0;
+    if (childPid == 0) { /* Child */
+      for (int j = 0; j < NLOOPS; j++) {
+        mutex_lock(m);
+        if (mutex_held == 1) {
+          errExit("lock already held");
+        }
+        mutex_held = 1;
+        printf("Child  (%jd) %d\n", (intmax_t)getpid(), j);
+        mutex_held = 0;
+        mutex_unlock(m);
+      }
+      printf("Child  (%jd) done\n", (intmax_t)getpid());
+      return 0;
+    }
   }
 
   /* Parent falls through to here. */
-
-  for (int j = 0; j < NLOOPS; j++) {
-    mutex_lock(m);
-    printf("Parent (%jd) %d\n", (intmax_t)getpid(), j);
-    mutex_unlock(m);
+  printf("threads spawned\n");
+  for (int child_index = 0; child_index < NTHREADS; child_index++) {
+    wait(NULL);
   }
-
-  wait(NULL);
+  printf("Parent (%jd) done\n", (intmax_t)getpid());
 
   return 0;
 }

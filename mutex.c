@@ -13,9 +13,20 @@ mutex_t *new_mutex() {
   return m;
 }
 
+// Atomically set *obj = value if its current value is expected. Returns true if
+// *obj was successfully set to value.
+//
+// The implementation uses atomic_compare_exchange_weak, which is allowed to
+// fail non-deterministically even if *obj == expected originally.
+_Bool atomic_compare_and_set(_Atomic(uint32_t) *obj, uint32_t expected, uint32_t value) {
+  // atomic_compare_and_exchange_weak also sets expected to the old value on
+  // failure. Wrapping it in a function avoids affecting the caller by
+  // harmlessly changing the function argument.
+  return atomic_compare_exchange_weak(obj, &expected, value);
+}
+
 void mutex_lock(mutex_t *m) {
-  uint32_t expected = UNLOCKED;
-  while (!atomic_compare_exchange_weak(m, &expected, LOCKED)) {
+  while (!atomic_compare_and_set(m, UNLOCKED, LOCKED)) {
     // Wait for a futex_wake signal on m. The kernel will immediately bail out
     // if it finds mutex value is not LOCKED, which might occur if between the
     // compare-exchange and futex_wait the mutex is released. Without this
