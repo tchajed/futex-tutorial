@@ -18,7 +18,8 @@ mutex_t *new_mutex() {
 //
 // The implementation uses atomic_compare_exchange_weak, which is allowed to
 // fail non-deterministically even if *obj == expected originally.
-_Bool atomic_compare_and_set(_Atomic(uint32_t) *obj, uint32_t expected, uint32_t value) {
+_Bool atomic_compare_and_set(_Atomic(uint32_t) *obj, uint32_t expected,
+                             uint32_t value) {
   // atomic_compare_and_exchange_weak also sets expected to the old value on
   // failure. Wrapping it in a function avoids affecting the caller by
   // harmlessly changing the function argument.
